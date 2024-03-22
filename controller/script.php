@@ -10,9 +10,35 @@ $messageTypes = ["success", "info", "warning", "danger", "dark"];
 
 $baseURL = "http://$_SERVER[HTTP_HOST]/apps/tugas/sig_kampung_adat_kabupaten_alor/";
 $name_website = "SIG Kampung Adat Kabupaten Alor";
+$accessToken = "pk.eyJ1IjoibmV0bWVkaWFmcmFtZWNvZGUiLCJhIjoiY2x0dzZpbWtqMXVhbzJrcGdweXZla3BxaiJ9.Ax92EfOJJc8UfVYqxuvYPg";
 
 $select_auth = "SELECT * FROM auth";
 $views_auth = mysqli_query($conn, $select_auth);
+
+$dayNames = array(
+  'Sunday' => 'Minggu',
+  'Monday' => 'Senin',
+  'Tuesday' => 'Selasa',
+  'Wednesday' => 'Rabu',
+  'Thursday' => 'Kamis',
+  'Friday' => 'Jumat',
+  'Saturday' => 'Sabtu'
+);
+
+$monthNames = array(
+  'January' => 'Januari',
+  'February' => 'Februari',
+  'March' => 'Maret',
+  'April' => 'April',
+  'May' => 'Mei',
+  'June' => 'Juni',
+  'July' => 'Juli',
+  'August' => 'Agustus',
+  'September' => 'September',
+  'October' => 'Oktober',
+  'November' => 'November',
+  'December' => 'Desember'
+);
 
 if (!isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
   if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["time_message"]) && (time() - $_SESSION["project_sig_kampung_adat_kabupaten_alor"]["time_message"]) > 2) {
@@ -374,6 +400,123 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
       $message_type = "success";
       alert($message, $message_type);
       header("Location: sub-menu-access");
+      exit();
+    }
+  }
+
+  $kategori_fasilitas = "SELECT * FROM kategori_fasilitas";
+  $views_kategori_fasilitas = mysqli_query($conn, $kategori_fasilitas);
+  if (isset($_POST["add_kategori_fasilitas"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kategori_fasilitas($conn, $validated_post, $action = 'insert') > 0) {
+      $message = "Kategori fasilitas berhasil ditambahkan.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: list-fasilitas");
+      exit();
+    }
+  }
+  if (isset($_POST["edit_kategori_fasilitas"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kategori_fasilitas($conn, $validated_post, $action = 'update') > 0) {
+      $message = "Kategori fasilitas " . $_POST['nama_kfOld'] . " berhasil diubah.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: list-fasilitas");
+      exit();
+    }
+  }
+  if (isset($_POST["delete_kategori_fasilitas"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kategori_fasilitas($conn, $validated_post, $action = 'delete') > 0) {
+      $message = "Kategori fasilitas " . $_POST['nama_kfOld'] . " berhasil dihapus.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: list-fasilitas");
+      exit();
+    }
+  }
+
+  $kampung_adat = "SELECT * FROM kampung_adat";
+  $views_kampung_adat = mysqli_query($conn, $kampung_adat);
+  if (isset($_POST["add_kampung_adat"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kampung_adat($conn, $validated_post, $action = 'insert', $_POST['deskripsi']) > 0) {
+      $message = "Kampung adat berhasil ditambahkan.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: tambah-kampung");
+      exit();
+    }
+  }
+  if (isset($_POST["edit_kampung_adat"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kampung_adat($conn, $validated_post, $action = 'update', $_POST['deskripsi']) > 0) {
+      $message = "Kampung adat " . $_POST['nama_kampungOld'] . " berhasil diubah.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: list-kampung");
+      exit();
+    }
+  }
+  if (isset($_POST["delete_kampung_adat"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kampung_adat($conn, $validated_post, $action = 'delete', $deskripsi = "") > 0) {
+      $message = "Kampung adat " . $_POST['nama_kampungOld'] . " berhasil dihapus.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: list-kampung");
+      exit();
+    }
+  }
+
+  $kunjungan = "SELECT kunjungan.*, kampung_adat.nama_kampung FROM kunjungan JOIN kampung_adat ON kunjungan.id_kampung_adat=kampung_adat.id_kampung_adat";
+  $views_kunjungan = mysqli_query($conn, $kunjungan);
+  if (isset($_POST["add_kunjungan"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kunjungan($conn, $validated_post, $action = 'insert', $_POST['deskripsi']) > 0) {
+      $message = "Berhasil menambahkan data kunjungan baru.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: kunjungan");
+      exit();
+    }
+  }
+  if (isset($_POST["edit_kunjungan"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kunjungan($conn, $validated_post, $action = 'update', $_POST['deskripsi']) > 0) {
+      $message = "Data kunjungan kampung adat " . $_POST['nama_kampungOld'] . " berhasil diubah.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: kunjungan");
+      exit();
+    }
+  }
+  if (isset($_POST["delete_kunjungan"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kunjungan($conn, $validated_post, $action = 'delete', $deskripsi = "") > 0) {
+      $message = "Data kunjungan kampung adat " . $_POST['nama_kampungOld'] . " berhasil dihapus.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: kunjungan");
       exit();
     }
   }

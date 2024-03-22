@@ -21,6 +21,7 @@ CREATE TABLE kategori_fasilitas(
 
 CREATE TABLE kampung_adat (
   id_kampung_adat INT AUTO_INCREMENT PRIMARY KEY,
+  img_kampung VARCHAR(75) NOT NULL,
   nama_kampung VARCHAR(100) NOT NULL,
   lokasi VARCHAR(100) NOT NULL,
   latitude CHAR(20),
@@ -40,8 +41,8 @@ CREATE TABLE fasilitas_ka(
 
 CREATE TABLE kunjungan(
   id_kunjungan INT AUTO_INCREMENT PRIMARY KEY,
-  id_user INT,
   id_kampung_adat INT,
+  jumlah_kunjungan INT,
   tgl DATE DEFAULT CURRENT_TIMESTAMP,
   waktu TIME DEFAULT CURRENT_TIMESTAMP,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

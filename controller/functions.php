@@ -919,6 +919,125 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
     return mysqli_affected_rows($conn);
   }
 
+  function kategori_fasilitas($conn, $data, $action)
+  {
+    if ($action == "insert") {
+      $sql = "INSERT INTO kategori_fasilitas(nama_kf) VALUES('$data[nama_kf]')";
+    }
+
+    if ($action == "update") {
+      $sql = "UPDATE kategori_fasilitas SET nama_kf='$data[nama_kf]' WHERE id_kf='$data[id_kf]'";
+    }
+
+    if ($action == "delete") {
+      $sql = "DELETE FROM kategori_fasilitas WHERE id_kf='$data[id_kf]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
+  function kampung_adat($conn, $data, $action, $deskripsi)
+  {
+    $path = "../assets/img/kampung-adat/";
+
+    if ($action == "insert") {
+      $check_data = "SELECT * FROM kampung_adat WHERE nama_kampung='$data[nama_kampung]'";
+      $take_data = mysqli_query($conn, $check_data);
+      if (mysqli_num_rows($take_data) > 0) {
+        $message = "Maaf, nama kampung adat " . $data['nama_kampung'] . " sudah ada.";
+        $message_type = "danger";
+        alert($message, $message_type);
+        return false;
+      } else {
+        $fileName = basename($_FILES["img_kampung"]["name"]);
+        $fileName = str_replace(" ", "-", $fileName);
+        $fileName_encrypt = crc32($fileName);
+        $ekstensiGambar = explode('.', $fileName);
+        $ekstensiGambar = strtolower(end($ekstensiGambar));
+        $imageUploadPath = $path . $fileName_encrypt . "." . $ekstensiGambar;
+        $fileType = pathinfo($imageUploadPath, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg');
+        if (in_array($fileType, $allowTypes)) {
+          $imageTemp = $_FILES["img_kampung"]["tmp_name"];
+          compressImage($imageTemp, $imageUploadPath, 75);
+          $img_kampung = $fileName_encrypt . "." . $ekstensiGambar;
+        } else {
+          $message = "Maaf, hanya file gambar JPG, JPEG, dan PNG yang diizinkan.";
+          $message_type = "danger";
+          alert($message, $message_type);
+          return false;
+        }
+        $sql = "INSERT INTO kampung_adat(img_kampung,nama_kampung,lokasi,latitude,longitude,deskripsi) VALUES('$img_kampung','$data[nama_kampung]','$data[lokasi]','$data[latitude]','$data[longitude]','$deskripsi')";
+      }
+    }
+
+    if ($action == "update") {
+      if ($data['nama_kampung'] !== $data['nama_kampungOld']) {
+        $check_data = "SELECT * FROM kampung_adat WHERE nama_kampung='$data[nama_kampung]'";
+        $take_data = mysqli_query($conn, $check_data);
+        if (mysqli_num_rows($take_data) > 0) {
+          $message = "Maaf, nama kampung adat " . $data['nama_kampung'] . " sudah ada.";
+          $message_type = "danger";
+          alert($message, $message_type);
+          return false;
+        }
+      }
+      if (!empty($_FILES['img_kampung']["name"])) {
+        $fileName = basename($_FILES["img_kampung"]["name"]);
+        $fileName = str_replace(" ", "-", $fileName);
+        $fileName_encrypt = crc32($fileName);
+        $ekstensiGambar = explode('.', $fileName);
+        $ekstensiGambar = strtolower(end($ekstensiGambar));
+        $imageUploadPath = $path . $fileName_encrypt . "." . $ekstensiGambar;
+        $fileType = pathinfo($imageUploadPath, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg');
+        if (in_array($fileType, $allowTypes)) {
+          $imageTemp = $_FILES["img_kampung"]["tmp_name"];
+          compressImage($imageTemp, $imageUploadPath, 75);
+          $img_kampung = $fileName_encrypt . "." . $ekstensiGambar;
+          $remove_image = str_replace($path, "", $data['img_kampungOld']);
+          unlink($path . $remove_image);
+        } else {
+          $message = "Maaf, hanya file gambar JPG, JPEG, dan PNG yang diizinkan.";
+          $message_type = "danger";
+          alert($message, $message_type);
+          return false;
+        }
+      } else if (empty($_FILE['img_kampung']["name"])) {
+        $img_kampung = $data['img_kampungOld'];
+      }
+      $sql = "UPDATE kampung_adat SET img_kampung='$img_kampung', nama_kampung='$data[nama_kampung]', lokasi='$data[lokasi]', latitude='$data[latitude]', longitude='$data[longitude]', deskripsi='$deskripsi' WHERE id_kampung_adat='$data[id_kampung_adat]'";
+    }
+
+    if ($action == "delete") {
+      $remove_image = str_replace($path, "", $data['img_kampungOld']);
+      unlink($path . $remove_image);
+      $sql = "DELETE FROM kampung_adat WHERE id_kampung_adat='$data[id_kampung_adat]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
+  function kunjungan($conn, $data, $action)
+  {
+    if ($action == "insert") {
+      $sql = "INSERT INTO kunjungan(id_kampung_adat,jumlah_kunjungan) VALUES('$data[id_kampung_adat]','$data[jumlah_kunjungan]')";
+    }
+
+    if ($action == "update") {
+      $sql = "UPDATE kunjungan SET id_kampung_adat='$data[id_kampung_adat]', jumlah_kunjungan='$data[jumlah_kunjungan]' WHERE id_kunjungan='$data[id_kunjungan]'";
+    }
+
+    if ($action == "delete") {
+      $sql = "DELETE FROM kunjungan WHERE id_kunjungan='$data[id_kunjungan]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
   function __name($conn, $data, $action)
   {
     if ($action == "insert") {
@@ -934,4 +1053,3 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
     return mysqli_affected_rows($conn);
   }
 }
-

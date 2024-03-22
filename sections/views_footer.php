@@ -77,7 +77,11 @@ showMessage("error", "Kesalahan", $(".message-danger").data("message-danger"));
 
 <script>
 $('.custom-file-input').on('change', function() {
-  let fileName = $(this).val().split('\').pop();
+  let fileName = $(this).val().split('\\').pop();
   $(this).next('.custom-file-label').addClass("selected").html(fileName);
 });
+</script>
+
+<script>
+  CKEDITOR.replace('deskripsi');
 </script>

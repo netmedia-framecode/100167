@@ -25,3 +25,8 @@
 
 <!-- Custom styles for plugin -->
 <script src="<?= $baseURL ?>assets/sweetalert/dist/sweetalert2.all.min.js"></script>
+<script src="<?= $baseURL; ?>assets/ckeditor/ckeditor.js"></script>
+<link href="<?= $baseURL ?>assets/css/scrollbar.css" rel="stylesheet">
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
