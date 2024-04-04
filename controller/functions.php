@@ -59,6 +59,20 @@ function compressImage($source, $destination, $quality)
   return $destination;
 }
 
+function kontak($conn, $data, $action, $pesan)
+{
+  if ($action == "insert") {
+    $sql = "INSERT INTO kontak(nama,email,phone,pesan) VALUES('$data[nama]','$data[email]','$data[phone]','$pesan')";
+  }
+
+  if ($action == "delete") {
+    $sql = "DELETE FROM kontak WHERE id_kontak='$data[id_kontak]'";
+  }
+
+  mysqli_query($conn, $sql);
+  return mysqli_affected_rows($conn);
+}
+
 if (!isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
   function register($conn, $data, $action)
   {
@@ -1035,6 +1049,103 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
     }
 
     mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
+  function tentang($conn, $data, $action)
+  {
+    if ($action == "update") {
+      $sql = "UPDATE tentang SET deskripsi='$data[deskripsi]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
+  function galeri($conn, $data, $action)
+  {
+    $path = "../assets/img/";
+
+    if ($action == "insert") {
+      $fileName = basename($_FILES["image"]["name"]);
+      $fileName = str_replace(" ", "-", $fileName);
+      $fileName_encrypt = crc32($fileName);
+      $ekstensiGambar = explode('.', $fileName);
+      $ekstensiGambar = strtolower(end($ekstensiGambar));
+      $imageUploadPath = $path . "galeri_" . $fileName_encrypt . "." . $ekstensiGambar;
+      $fileType = pathinfo($imageUploadPath, PATHINFO_EXTENSION);
+      $allowTypes = array('jpg', 'png', 'jpeg');
+      if (in_array($fileType, $allowTypes)) {
+        $imageTemp = $_FILES["image"]["tmp_name"];
+        compressImage($imageTemp, $imageUploadPath, 75);
+        $image = "galeri_" . $fileName_encrypt . "." . $ekstensiGambar;
+      } else {
+        $message = "Maaf, hanya file gambar JPG, JPEG, dan PNG yang diizinkan.";
+        $message_type = "danger";
+        alert($message, $message_type);
+        return false;
+      }
+      $sql = "INSERT INTO galeri(image,ket) VALUES('$image','$data[ket]')";
+    }
+
+    if ($action == "update") {
+      if (!empty($_FILES['image']["name"])) {
+        $fileName = basename($_FILES["image"]["name"]);
+        $fileName = str_replace(" ", "-", $fileName);
+        $fileName_encrypt = crc32($fileName);
+        $ekstensiGambar = explode('.', $fileName);
+        $ekstensiGambar = strtolower(end($ekstensiGambar));
+        $imageUploadPath = $path . $fileName_encrypt . "." . $ekstensiGambar;
+        $fileType = pathinfo($imageUploadPath, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg');
+        if (in_array($fileType, $allowTypes)) {
+          $imageTemp = $_FILES["image"]["tmp_name"];
+          compressImage($imageTemp, $imageUploadPath, 75);
+          $image = "galeri_" . $fileName_encrypt . "." . $ekstensiGambar;
+          unlink($path . $data['imageOld']);
+        } else {
+          $message = "Maaf, hanya file gambar JPG, JPEG, dan PNG yang diizinkan.";
+          $message_type = "danger";
+          alert($message, $message_type);
+          return false;
+        }
+      } else if (empty($_FILE['image']["name"])) {
+        $image = $data['imageOld'];
+      }
+      $sql = "UPDATE galeri SET image='$image', ket='$data[ket]' WHERE id_galeri='$data[id_galeri]'";
+    }
+
+    if ($action == "delete") {
+      unlink($path . $data['image']);
+      $sql = "DELETE FROM galeri WHERE id_galeri='$data[id_galeri]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
+  function fasilitas_ka($conn, $data, $action)
+  {
+    if ($action == "update") {
+      $id_kf_values = $data['id_kf'];
+      $id_kf_count = count($data['id_kf']);
+      $check_data = "SELECT * FROM fasilitas_ka WHERE id_kampung_adat='$data[id_kampung_adat]'";
+      $take_data = mysqli_query($conn, $check_data);
+      if (mysqli_num_rows($take_data) == 0) {
+        for ($kf = 0; $kf < $id_kf_count; $kf++) {
+          $sql_insert = "INSERT INTO fasilitas_ka (id_kampung_adat, id_kf) VALUES ('$data[id_kampung_adat]', '$id_kf_values[$kf]')";
+          mysqli_query($conn, $sql_insert);
+        }
+      } else {
+        $sql_delete = "DELETE FROM fasilitas_ka WHERE id_kampung_adat='$data[id_kampung_adat]'";
+        mysqli_query($conn, $sql_delete);
+        for ($kf = 0; $kf < $id_kf_count; $kf++) {
+          $sql_insert = "INSERT INTO fasilitas_ka (id_kampung_adat, id_kf) VALUES ('$data[id_kampung_adat]', '$id_kf_values[$kf]')";
+          mysqli_query($conn, $sql_insert);
+        }
+      }
+    }
+
     return mysqli_affected_rows($conn);
   }
 

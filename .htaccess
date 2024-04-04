@@ -19,3 +19,5 @@ RewriteRule ^(.*)$ $1.html
 
 ErrorDocument 404 http://127.0.0.1:1010/apps/tugas/sig_kampung_adat_kabupaten_alor/
 IndexIgnore *.gif *.zip *.txt *.png *.php *.mp4
+
+

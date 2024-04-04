@@ -3,12 +3,13 @@
 }
 error_reporting(~E_NOTICE & ~E_DEPRECATED);
 require_once("db_connect.php");
-require_once("../models/sql.php");
+require_once(__DIR__ . "/../models/sql.php");
 require_once("functions.php");
 
 $messageTypes = ["success", "info", "warning", "danger", "dark"];
 
 $baseURL = "http://$_SERVER[HTTP_HOST]/apps/tugas/sig_kampung_adat_kabupaten_alor/";
+// $baseURL = "https://$_SERVER[HTTP_HOST]/";
 $name_website = "SIG Kampung Adat Kabupaten Alor";
 $accessToken = "pk.eyJ1IjoibmV0bWVkaWFmcmFtZWNvZGUiLCJhIjoiY2x0dzZpbWtqMXVhbzJrcGdweXZla3BxaiJ9.Ax92EfOJJc8UfVYqxuvYPg";
 
@@ -39,6 +40,30 @@ $monthNames = array(
   'November' => 'November',
   'December' => 'Desember'
 );
+
+$tentang = "SELECT * FROM tentang";
+$views_tentang = mysqli_query($conn, $tentang);
+
+$kontak = "SELECT * FROM kontak";
+$views_kontak = mysqli_query($conn, $kontak);
+if (isset($_POST['add_kontak'])) {
+  $validated_post = array_map(function ($value) use ($conn) {
+    return valid($conn, $value);
+  }, $_POST);
+  if (kontak($conn, $validated_post, $action = 'insert', $pesan = $_POST['pesan']) > 0) {
+    $message = "Pesan anda berhasil dikirim.";
+    $message_type = "success";
+    alert($message, $message_type);
+    header("Location: kontak");
+    exit();
+  }
+}
+
+$galeri = "SELECT * FROM galeri ORDER BY id_galeri DESC";
+$views_galeri = mysqli_query($conn, $galeri);
+
+$kampung_adat = "SELECT * FROM kampung_adat";
+$views_kampung_adat = mysqli_query($conn, $kampung_adat);
 
 if (!isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
   if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["time_message"]) && (time() - $_SESSION["project_sig_kampung_adat_kabupaten_alor"]["time_message"]) > 2) {
@@ -443,8 +468,6 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
     }
   }
 
-  $kampung_adat = "SELECT * FROM kampung_adat";
-  $views_kampung_adat = mysqli_query($conn, $kampung_adat);
   if (isset($_POST["add_kampung_adat"])) {
     $validated_post = array_map(function ($value) use ($conn) {
       return valid($conn, $value);
@@ -482,6 +505,16 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
     }
   }
 
+  if (isset($_POST["edit_fasilitas_ka"])) {
+    if (fasilitas_ka($conn, $_POST, $action = 'update') > 0) {
+      $message = "Fasilitas kampung adat " . $_POST['nama_kampung'] . " berhasil diubah.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: fasilitas-kampung-adat");
+      exit();
+    }
+  }
+
   $kunjungan = "SELECT kunjungan.*, kampung_adat.nama_kampung FROM kunjungan JOIN kampung_adat ON kunjungan.id_kampung_adat=kampung_adat.id_kampung_adat";
   $views_kunjungan = mysqli_query($conn, $kunjungan);
   if (isset($_POST["add_kunjungan"])) {
@@ -501,7 +534,7 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
       return valid($conn, $value);
     }, $_POST);
     if (kunjungan($conn, $validated_post, $action = 'update', $_POST['deskripsi']) > 0) {
-      $message = "Data kunjungan kampung adat " . $_POST['nama_kampungOld'] . " berhasil diubah.";
+      $message = "Data kunjungan kampung adat " . $_POST['nama_kampung'] . " berhasil diubah.";
       $message_type = "success";
       alert($message, $message_type);
       header("Location: kunjungan");
@@ -513,10 +546,64 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
       return valid($conn, $value);
     }, $_POST);
     if (kunjungan($conn, $validated_post, $action = 'delete', $deskripsi = "") > 0) {
-      $message = "Data kunjungan kampung adat " . $_POST['nama_kampungOld'] . " berhasil dihapus.";
+      $message = "Data kunjungan kampung adat " . $_POST['nama_kampung'] . " berhasil dihapus.";
       $message_type = "success";
       alert($message, $message_type);
       header("Location: kunjungan");
+      exit();
+    }
+  }
+
+  if (isset($_POST["edit_tentang"])) {
+    if (tentang($conn, $_POST, $action = 'update') > 0) {
+      $message = "Tentang kampung adat Kabupaten Alor berhasil diubah.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: tentang");
+      exit();
+    }
+  }
+
+  if (isset($_POST["delete_kontak"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (kontak($conn, $validated_post, $action = 'delete', $_POST['pesan']) > 0) {
+      $message = "Pesan berhasil dihapus.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: kontak");
+      exit();
+    }
+  }
+
+  if (isset($_POST["add_galeri"])) {
+    if (galeri($conn, $_POST, $action = 'insert') > 0) {
+      $message = "Gambar baru berhasil ditambahkan.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: galeri");
+      exit();
+    }
+  }
+  if (isset($_POST["edit_galeri"])) {
+    if (galeri($conn, $_POST, $action = 'update') > 0) {
+      $message = "Gambar berhasil diubah.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: galeri");
+      exit();
+    }
+  }
+  if (isset($_POST["delete_galeri"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (galeri($conn, $validated_post, $action = 'delete') > 0) {
+      $message = "Gambar berhasil dihapus.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: galeri");
       exit();
     }
   }
