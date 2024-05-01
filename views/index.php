@@ -152,12 +152,14 @@ ini_set('display_errors', 0); ?>
             $chartColors = array_column($dataGrafikPie, 'color');
             $index = 0;
             foreach ($resultPie as $rowPie) {
-              $color = $chartColors[$index];
+              if (isset($chartColors[$index])) {
+                $color = $chartColors[$index];
             ?>
-              <span class="mr-2">
-                <i class="fas fa-circle" style="color: <?= $color ?>"></i> <?= $rowPie['category'] ?>
-              </span>
+                <span class="mr-2">
+                  <i class="fas fa-circle" style="color: <?= $color ?>"></i> <?= $rowPie['category'] ?>
+                </span>
             <?php
+              }
               $index++;
             }
             ?>

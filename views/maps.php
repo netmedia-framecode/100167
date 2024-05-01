@@ -52,7 +52,7 @@ require_once("../templates/views_top.php"); ?>
     <div class="col-lg-3" style="height: 820px; overflow-y: auto;">
       <div class="card shadow border-0 mb-3">
         <?php foreach ($views_kampung_adat as $data) {
-          $num_char = 47;
+          $num_char = 100;
           $text = trim($data['deskripsi']);
           $text = strip_tags(preg_replace('#</?strong.*?>#is', '', $text));
           $lentext = strlen($text);

@@ -13,6 +13,18 @@
     if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"]["message_$type"])) {
       echo "<div class='message-$type' data-message-$type='{$_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"]["message_$type"]}'></div>";
     }
+  }
+
+  // Set error handler to handle errors
+  set_error_handler('handle_error');
+
+  // Check if there is an error message in session and display it
+  if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'];
+    // Clear error message from session
+    unset($_SESSION['error_message']);
+    // Display error message
+    echo "<div class='alert alert-danger m-3'><span class='badge bg-danger text-white'>Peringatan!!</span> Web Builder - WASD Netmedia Framecode mendeteksi pesan kesalahan sebagai berikut:<br>$error_message</div>";
   } ?>
 
   <!-- Page Wrapper -->

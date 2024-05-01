@@ -21,10 +21,10 @@ require_once("../templates/auth_top.php"); ?>
               </div>
               <form method="post">
                 <div class="form-group">
-                  <input type="email" name="email" class="form-control form-control-user" id="email" placeholder="Email">
+                  <input type="email" name="email" class="form-control form-control-user" id="email" placeholder="Email" required>
                 </div>
                 <div class="form-group">
-                  <input type="password" name="password" class="form-control form-control-user" id="password" placeholder="Password">
+                  <input type="password" name="password" class="form-control form-control-user" id="password" placeholder="Password" required>
                 </div>
                 <button type="submit" name="login" class="btn btn-primary btn-user btn-block">
                   Login

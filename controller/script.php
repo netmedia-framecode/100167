@@ -10,6 +10,11 @@ $messageTypes = ["success", "info", "warning", "danger", "dark"];
 
 $baseURL = "http://$_SERVER[HTTP_HOST]/apps/tugas/sig_kampung_adat_kabupaten_alor/";
 // $baseURL = "https://$_SERVER[HTTP_HOST]/";
+$hostname = $_SERVER['HTTP_HOST'];
+$port = $_SERVER['SERVER_PORT'];
+if (strpos($hostname, 'apps.test') !== false && $port == 8080) {
+  $baseURL = str_replace('/apps/', '/', $baseURL);
+}
 $name_website = "SIG Kampung Adat Kabupaten Alor";
 $accessToken = "pk.eyJ1IjoibmV0bWVkaWFmcmFtZWNvZGUiLCJhIjoiY2x0dzZpbWtqMXVhbzJrcGdweXZla3BxaiJ9.Ax92EfOJJc8UfVYqxuvYPg";
 
@@ -334,7 +339,7 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
 
   $select_user_access_menu = "SELECT user_access_menu.*, user_role.role, user_menu.menu
                                 FROM user_access_menu 
-                                JOIN user_role ON user_access_menu.id_role=.user_role.id_role 
+                                JOIN user_role ON user_access_menu.id_role=user_role.id_role 
                                 JOIN user_menu ON user_access_menu.id_menu=user_menu.id_menu
                               ";
   $views_user_access_menu = mysqli_query($conn, $select_user_access_menu);
@@ -382,7 +387,7 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
 
   $select_user_access_sub_menu = "SELECT user_access_sub_menu.*, user_role.role, user_sub_menu.title
                                 FROM user_access_sub_menu 
-                                JOIN user_role ON user_access_sub_menu.id_role=.user_role.id_role 
+                                JOIN user_role ON user_access_sub_menu.id_role=user_role.id_role 
                                 JOIN user_sub_menu ON user_access_sub_menu.id_sub_menu=user_sub_menu.id_sub_menu
                               ";
   $views_user_access_sub_menu = mysqli_query($conn, $select_user_access_sub_menu);

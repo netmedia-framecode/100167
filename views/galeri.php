@@ -33,7 +33,7 @@ require_once("../templates/views_top.php"); ?>
             <?php foreach ($views_galeri as $data) : ?>
               <tr>
                 <td><img src="<?= $baseURL ?>assets/img/<?= $data['image'] ?>" class="img-thumbnail" style="width: 100%; height: 200px; object-fit: cover;" alt=""></td>
-                <td><?= $data['ket'] ?></td>
+                <td><?= strip_tags($data['ket']) ?></td>
                 <td class="text-center">
                   <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ubah<?= $data['id_galeri'] ?>">
                     <i class="bi bi-pencil-square"></i> Ubah
@@ -57,9 +57,9 @@ require_once("../templates/views_top.php"); ?>
                             </div>
                             <div class="form-group">
                               <label for="ket">Keterangan</label>
-                              <textarea name="ket" id="deskripsi<?= $data['id_galeri'] ?>" class="form-control" cols="30" rows="10"><?= $data['ket'] ?></textarea>
+                              <textarea name="ket" id="edit-deskripsi<?= $data['id_galeri'] ?>" class="form-control" cols="30" rows="10"><?= $data['ket'] ?></textarea>
                               <script>
-                                CKEDITOR.replace('deskripsi<?= $data['id_galeri'] ?>');
+                                CKEDITOR.replace('edit-deskripsi<?= $data['id_galeri'] ?>');
                               </script>
                             </div>
                           </div>

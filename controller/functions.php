@@ -1,4 +1,35 @@
 <?php
+
+function handle_error($errno, $errstr, $errfile, $errline)
+{
+  // Create error log file path based on the file where the error occurred
+  $errorLog = dirname(__FILE__) . '/error_log.log'; // Error log file location within the project folder
+
+  // Format error message with additional information
+  $error_message = "[" . date("Y-m-d H:i:s") . "] Error [$errno]: $errstr in $errfile on line $errline" . PHP_EOL;
+
+  // Attempt to open the error log file in append mode, creating it if it doesn't exist
+  $file_handle = fopen($errorLog, 'a');
+  if ($file_handle !== false) {
+    // Write error message to the log file
+    fwrite($file_handle, $error_message);
+    // Close the file handle
+    fclose($file_handle);
+  }
+
+  // Save error message in session
+  $_SESSION['error_message'] = $error_message;
+
+  // Redirect user back to the same page only if there is no error
+  if (!isset($_SESSION['error_flag'])) {
+    // Set error flag to prevent infinite redirection loop
+    $_SESSION['error_flag'] = true;
+    // Redirect user back to the same page
+    header("Location: {$_SERVER['REQUEST_URI']}");
+    exit(); // Stop further execution
+  }
+}
+
 function valid($conn, $value)
 {
   $valid = htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $value))));
@@ -1116,7 +1147,10 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
     }
 
     if ($action == "delete") {
-      unlink($path . $data['image']);
+      $imagePath = $path . $data['image'];
+      if (file_exists($imagePath)) {
+        unlink($path . $data['image']);
+      }
       $sql = "DELETE FROM galeri WHERE id_galeri='$data[id_galeri]'";
     }
 
