@@ -123,7 +123,7 @@ require_once("../templates/views_top.php"); ?>
             </div>
             <div class="form-group">
               <label for="ket">Keterangan</label>
-              <textarea name="ket" id="deskripsi" class="form-control" cols="30" rows="10"></textarea>
+              <textarea name="ket" id="add-deskripsi" class="form-control" cols="30" rows="10"></textarea>
             </div>
           </div>
           <div class="modal-footer justify-content-center border-top-0">

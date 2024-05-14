@@ -1068,7 +1068,7 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
   function kunjungan($conn, $data, $action)
   {
     if ($action == "insert") {
-      $sql = "INSERT INTO kunjungan(id_kampung_adat,jumlah_kunjungan) VALUES('$data[id_kampung_adat]','$data[jumlah_kunjungan]')";
+      $sql = "INSERT INTO kunjungan(id_kampung_adat,jumlah_kunjungan,waktu) VALUES('$data[id_kampung_adat]','$data[jumlah_kunjungan]',NOW())";
     }
 
     if ($action == "update") {
@@ -1126,14 +1126,17 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
         $fileName_encrypt = crc32($fileName);
         $ekstensiGambar = explode('.', $fileName);
         $ekstensiGambar = strtolower(end($ekstensiGambar));
-        $imageUploadPath = $path . $fileName_encrypt . "." . $ekstensiGambar;
+        $imageUploadPath = $path . "galeri_" . $fileName_encrypt . "." . $ekstensiGambar;
         $fileType = pathinfo($imageUploadPath, PATHINFO_EXTENSION);
         $allowTypes = array('jpg', 'png', 'jpeg');
         if (in_array($fileType, $allowTypes)) {
           $imageTemp = $_FILES["image"]["tmp_name"];
           compressImage($imageTemp, $imageUploadPath, 75);
           $image = "galeri_" . $fileName_encrypt . "." . $ekstensiGambar;
-          unlink($path . $data['imageOld']);
+          $imagePath = $path . $data['imageOld'];
+          if (file_exists($imagePath)) {
+            unlink($path . $data['imageOld']);
+          }
         } else {
           $message = "Maaf, hanya file gambar JPG, JPEG, dan PNG yang diizinkan.";
           $message_type = "danger";

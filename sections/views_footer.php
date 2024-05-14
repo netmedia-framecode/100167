@@ -83,5 +83,7 @@
 </script>
 
 <script>
+  CKEDITOR.replace('add-deskripsi');
   CKEDITOR.replace('deskripsi');
+  CKEDITOR.replace('ket');
 </script>

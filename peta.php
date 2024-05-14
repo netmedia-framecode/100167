@@ -130,8 +130,8 @@ require_once("sections/head.php");
             var map = new mapboxgl.Map({
               container: 'map',
               style: 'mapbox://styles/mapbox/streets-v11',
-              center: [124.4775359, -8.3324184],
-              zoom: 9,
+              center: [124.5098773, -8.2033862],
+              zoom: 10,
               attributionControl: false
             });
 
@@ -171,17 +171,23 @@ require_once("sections/head.php");
 
             var markers = [
               <?php foreach ($views_kampung_adat as $data) {
-                $num_char = 147;
+                $num_char = 22;
                 $text = trim($data['deskripsi']);
-                $text = strip_tags(preg_replace('#</?strong.*?>#is', '', $text));
+                // Menghapus karakter non-breaking space
+                $text = str_replace('&nbsp;', ' ', $text);
+                // Menghapus semua tag HTML
+                $text = strip_tags($text);
                 $lentext = strlen($text);
                 if ($lentext > $num_char) {
                   $deskripsi = substr($text, 0, $num_char) . '...';
-                } else if ($lentext <= $num_char) {
+                } else {
                   $deskripsi = substr($text, 0, $num_char);
-                } ?> {
+                }
+                // Encode deskripsi untuk mencegah karakter khusus menyebabkan kesalahan JavaScript
+                $deskripsi_encoded = htmlspecialchars($deskripsi, ENT_QUOTES, 'UTF-8');
+              ?> {
                   lngLat: [<?= $data['longitude'] ?>, <?= $data['latitude'] ?>],
-                  popupContent: '<div class="popup-container"><img class="popup-image" src="assets/img/kampung-adat/<?= $data['img_kampung'] ?>" alt="Gambar kampung <?= $data['nama_kampung'] ?> tidak ditemukan!" style="width: 100%;height: 100px;"><h3 class="popup-title"><?= $data['nama_kampung'] ?></h3><p class="popup-description"><?= $deskripsi ?></p></div>'
+                  popupContent: '<div class="popup-container"><img class="popup-image" src="../assets/img/kampung-adat/<?= $data['img_kampung'] ?>" alt="Gambar kampung <?= $data['nama_kampung'] ?> tidak ditemukan!"><h3 class="popup-title"><?= $data['nama_kampung'] ?></h3><p class="popup-description"><?= $deskripsi_encoded ?></p></div>'
                 },
               <?php } ?>
             ];

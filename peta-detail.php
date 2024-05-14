@@ -15,7 +15,7 @@ if (!isset($_GET['obj'])) {
     exit();
   } else {
     $data = mysqli_fetch_assoc($views_data_maps);
-    $num_char = 147;
+    $num_char = 27;
     $text = trim($data['deskripsi']);
     $text = strip_tags(preg_replace('#</?strong.*?>#is', '', $text));
     $lentext = strlen($text);
