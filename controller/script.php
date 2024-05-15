@@ -210,6 +210,18 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
       exit();
     }
   }
+  if (isset($_POST["delete_users"])) {
+    $validated_post = array_map(function ($value) use ($conn) {
+      return valid($conn, $value);
+    }, $_POST);
+    if (users($conn, $validated_post, $action = 'delete') > 0) {
+      $message = "data users berhasil dihapus.";
+      $message_type = "success";
+      alert($message, $message_type);
+      header("Location: users");
+      exit();
+    }
+  }
   if (isset($_POST["add_role"])) {
     $validated_post = array_map(function ($value) use ($conn) {
       return valid($conn, $value);

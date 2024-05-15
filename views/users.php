@@ -90,6 +90,31 @@ require_once("../templates/views_top.php"); ?>
                       </div>
                     </div>
                   </div>
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#hapus<?= $data['id_user'] ?>">
+                    <i class="bi bi-trash3"></i> Hapus
+                  </button>
+                  <div class="modal fade" id="hapus<?= $data['id_user'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header border-bottom-0 shadow">
+                          <h5 class="modal-title" id="exampleModalLabel">Hapus <?= $data['name'] ?></h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form action="" method="post">
+                          <input type="hidden" name="id_user" value="<?= $data['id_user'] ?>">
+                          <div class="modal-body">
+                            <p>Jika anda yakin ingin menghapus pengguna ini, klik Hapus!</p>
+                          </div>
+                          <div class="modal-footer justify-content-center border-top-0">
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                            <button type="submit" name="delete_users" class="btn btn-danger btn-sm">Hapus</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             <?php $no++;

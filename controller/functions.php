@@ -788,6 +788,10 @@ if (isset($_SESSION["project_sig_kampung_adat_kabupaten_alor"]["users"])) {
       $sql = "UPDATE users SET id_role='$data[id_role]', id_active='$data[id_active]' WHERE id_user='$data[id_user]'";
     }
 
+    if ($action == "delete") {
+      $sql = "DELETE FROM users WHERE id_user='$data[id_user]'";
+    }
+
     mysqli_query($conn, $sql);
     return mysqli_affected_rows($conn);
   }
